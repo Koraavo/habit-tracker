@@ -322,14 +322,14 @@ def get_broken_streak_habits(habits):
             start_date = checkpoint.start_date.date()
             if habit.frequency == Frequency.WEEKLY:
                 if previous_end_date is not None and (
-                        start_date - previous_end_date != datetime.timedelta(weeks=1)
+                        start_date - previous_end_date != timedelta(weeks=1)
                         # or start_date.weekday() != previous_end_date.weekday()
                 ):
                     streak_broken = True
                     break
 
             elif habit.frequency == Frequency.DAILY:
-                if previous_end_date is not None and (start_date - previous_end_date != datetime.timedelta(days=1)):
+                if previous_end_date is not None and (start_date - previous_end_date != timedelta(days=1)):
                     streak_broken = True
                     break
 
