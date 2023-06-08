@@ -251,7 +251,7 @@ def get_longest_streak_for_habit(habit):
             previous_start_date = start_date
 
         elif habit.frequency == Frequency.DAILY:
-            if previous_start_date is None or start_date - previous_start_date == datetime.timedelta(days=1):
+            if previous_start_date is None or (start_date - previous_start_date).days == 1:
                 streak += 1
             else:
                 max_streak = max(max_streak, streak)
