@@ -488,8 +488,13 @@ def main():
             habit_id = int(habit_id)
             habit = session.query(Habit).get(habit_id)
             if habit:
-                start_date_str = input("Enter the start date (YYYY-MM-DD HH:MM): ")
-                start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d %H:%M")
+                while True:
+                    start_date_str = input("Enter the start date (YYYY-MM-DD HH:MM): ")
+                    try:
+                        start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M")
+                        break
+                    except ValueError:
+                        print("Invalid date format. Please enter the date in the format YYYY-MM-DD HH:MM.")
                 add_checkpoint(habit, start_date)
                 print("Checkpoint added successfully!")
             else:
