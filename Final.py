@@ -463,19 +463,20 @@ def main():
         if choice == "1":
             task = get_user_input("Enter the habit task: ")
             if task:
-                frequency_input = get_user_input("Enter the habit frequency (daily/weekly): ")
-                if frequency_input.lower() == "daily":
-                    frequency = Frequency.DAILY
-                elif frequency_input.lower() == "weekly":
-                    frequency = Frequency.WEEKLY
+                while True:
+                    frequency_input = get_user_input("Enter the habit frequency (daily/weekly): ")
+                    try:
+                        frequency = Frequency(frequency_input.lower())
+                        break
+                    except ValueError:
+                        print("Invalid frequency. Please enter 'daily' or 'weekly'.")
+                habit = create_habit(task, frequency)
+                session.add(habit)
+                session.commit()
+                print("Habit added successfully!")
             else:
-                print("Invalid task or frequency! Habit not created.")
+                print("Invalid task! Habit not created.")
                 continue
-            habit = create_habit(task, frequency)
-            session.add(habit)
-            session.commit()
-            print("Habit added successfully!")
-
         elif choice == "2":
             habits = session.query(Habit).order_by(Habit.id).all()
             print("Existing Habits:")
