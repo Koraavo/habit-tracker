@@ -386,7 +386,7 @@ def plot_habits_with_checkpoints(habits):
     plt.figure(figsize=(10, 6))
 
     # Get the date range for the graph
-    start_date = datetime.now().date() - timedelta(days=30)  # Start date is 30 days ago
+    start_date = datetime.now().date() - timedelta(days=60)  # Start date is 30 days ago
     end_date = datetime.now().date() + timedelta(days=60) # End date is 30 days after
 
     # Generate a list of all dates within the range
