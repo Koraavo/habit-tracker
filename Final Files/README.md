@@ -26,9 +26,14 @@ The habit tracker is capable of the following:
 - get habits with broken streaks
 - show a graph of selected habits
 
-SQL Alchemy is used to create a database and store the database.
+SQL Alchemy is used to create a database and store the data.
 
 You can run the file in the terminal or the command prompt by typing 
 <code>python3 Final.py </code>
+
+In order to complete a daily task, you would need to add a checkpoint in the year-month-date hour:min format
+This is how the habit is also tracked.
+
+Some basic tests are created in the test_application.py file.
 
 You can also run your code inside an IDE such as PyCharm by right-clicking on the file and selecting run. 
