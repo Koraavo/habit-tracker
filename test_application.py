@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch
 from io import StringIO
-from datetime import datetime
 from Final import *
+from datetime import datetime
 
 
 @pytest.fixture
@@ -19,12 +19,12 @@ def db_session():
     session.rollback()
     Base.metadata.drop_all(bind=session.bind)
 
+
 def test_create_habit():
     habit = create_habit("Exercise", Frequency.DAILY)
     assert habit.task == "Exercise"
     assert habit.frequency == Frequency.DAILY
 
-from datetime import datetime
 
 def test_add_checkpoint():
     habit = create_habit("Exercise", Frequency.DAILY)
@@ -40,6 +40,7 @@ def test_generate_random_habits(db_session):
     habits = db_session.query(Habit).all()
     assert len(habits) == 5
 
+
 def test_generate_fake_checkpoints(db_session):
     habit = create_habit("Exercise", Frequency.DAILY)
     db_session.add(habit)
@@ -52,6 +53,7 @@ def test_generate_fake_checkpoints(db_session):
     assert len(checkpoints) == 1
     assert checkpoints[0].start_date.date() == datetime.now().date()
 
+
 def test_get_longest_streak_for_habit():
     habit = create_habit("Exercise", Frequency.DAILY)
     start_date = datetime(2023, 5, 1)
@@ -59,25 +61,26 @@ def test_get_longest_streak_for_habit():
     streak = get_longest_streak_for_habit(habit)
     assert streak == 1
 
+
 def test_get_longest_run_streak():
     habit1 = create_habit("Exercise", Frequency.DAILY)
     habit2 = create_habit("Read a book", Frequency.DAILY)
     start_date = datetime(2023, 5, 1)
-    end_date = datetime(2023, 5, 2)
     add_checkpoint(habit1, start_date)
     add_checkpoint(habit2, start_date)
     longest_weekly_streak, _, longest_daily_streak, _ = get_longest_run_streak([habit1, habit2])
     assert longest_weekly_streak == 0
     assert longest_daily_streak == 1
 
+
 def test_get_broken_streak_habits():
     habit1 = create_habit("Exercise", Frequency.DAILY)
     habit2 = create_habit("Read a book", Frequency.DAILY)
     start_date = datetime(2023, 5, 1)
-    end_date = datetime(2023, 5, 2)
     add_checkpoint(habit1, start_date)
     broken_streak_habits = get_broken_streak_habits([habit1, habit2])
     assert broken_streak_habits == [habit2]
+
 
 def test_delete_habit(db_session):
     habit = create_habit("Exercise", Frequency.DAILY)
@@ -86,6 +89,7 @@ def test_delete_habit(db_session):
     delete_habit(habit)
     habits = db_session.query(Habit).all()
     assert len(habits) == 0
+
 
 def test_menu():
     with patch('sys.stdout', new=StringIO()) as fake_output, \
@@ -101,4 +105,3 @@ def test_menu():
     assert "Enter the habit task: " in output
     assert "Enter the habit frequency (1 for DAILY, 2 for WEEKLY): " in output
     assert "Goodbye!" in output
-

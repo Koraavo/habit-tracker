@@ -482,23 +482,32 @@ def main():
             print("Existing Habits:")
             for habit in habits:
                 print(f"{habit.id}. {habit.task} ({habit.frequency.value})")
-            habit_id = get_user_input("Enter the habit ID to add a checkpoint")
-            if not habit_id:
-                continue
-            habit_id = int(habit_id)
-            habit = session.query(Habit).get(habit_id)
-            if habit:
-                while True:
-                    start_date_str = input("Enter the start date (YYYY-MM-DD HH:MM): ")
-                    try:
-                        start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M")
+            while True:
+                habit_id = get_user_input("Enter the habit ID to add a checkpoint: ")
+                try:
+                    habit_id = int(habit_id)
+                    habit = session.query(Habit).get(habit_id)
+                    if habit:
                         break
-                    except ValueError:
-                        print("Invalid date format. Please enter the date in the format YYYY-MM-DD HH:MM.")
-                add_checkpoint(habit, start_date)
-                print("Checkpoint added successfully!")
-            else:
-                print("Invalid habit ID!")
+                    else:
+                        print("Invalid habit ID. Please enter a valid habit ID.")
+                except ValueError:
+                    print("Invalid habit ID. Please enter a valid integer.")
+            while True:
+                start_date_str = input("Enter the start date (YYYY-MM-DD HH:MM): ")
+                try:
+                    start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M")
+                    existing_checkpoint = session.query(Checkpoint).filter_by(habit_id=habit_id,
+                                                                              start_date=start_date).first()
+                    if existing_checkpoint:
+                        print("Checkpoint already exists for this habit and start date.")
+                        break
+                    else:
+                        add_checkpoint(habit, start_date)
+                        print("Checkpoint added successfully!")
+                        break
+                except ValueError:
+                    print("Invalid date format. Please enter the date in the format YYYY-MM-DD HH:MM.")
         elif choice == "3":
             get_habits()
         elif choice == "4":
