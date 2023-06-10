@@ -144,14 +144,14 @@ def generate_fake_checkpoints():
             if habit.frequency == Frequency.DAILY:
                 print("Generating daily checkpoints...")
                 num_checkpoints = random.randint(28, 35)
-                today = datetime.datetime.now().date()
+                today = datetime.now().date()
                 checkpoint_dates = set()
 
                 for _ in range(num_checkpoints):
                     # generates a random number of days (between 0 and 29),
                     # subtracts that duration from the current date (today),
                     # and assigns the resulting date to the variable start_date.
-                    start_date = today - datetime.timedelta(days=random.randint(0, 29))
+                    start_date = today - timedelta(days=random.randint(0, 29))
                     checkpoint_dates.add(start_date)
 
                 # Check if any future start_dates with the same date already exist
@@ -171,11 +171,11 @@ def generate_fake_checkpoints():
             elif habit.frequency == Frequency.WEEKLY:
                 print("Generating weekly checkpoints...")
                 num_weeks = random.randint(4, 5)
-                today = datetime.datetime.now().date()
+                today = datetime.now().date()
                 checkpoint_dates = set()
 
                 for _ in range(num_weeks):
-                    start_date = today - datetime.timedelta(weeks=random.randint(0, 3))
+                    start_date = today - timedelta(weeks=random.randint(0, 3))
                     checkpoint_dates.add(start_date)
 
                 # Check if any future start_dates with the same date already exist
