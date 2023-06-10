@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator
 import numpy as np
 from datetime import datetime, timedelta
+import matplotlib.dates as mdates
 
 # create the engine: sqlite
 engine = create_engine('sqlite:///habits.db')
@@ -386,17 +387,20 @@ def plot_habits_with_checkpoints(habits):
     plt.figure(figsize=(10, 6))
 
     # Get the date range for the graph
-    start_date = datetime.now().date() - timedelta(days=60)  # Start date is 30 days ago
-    end_date = datetime.now().date() + timedelta(days=60) # End date is 30 days after
-
+    all_dates = []
+    for habit in habits:
+        for checkpoint in habit.checkpoints:
+            all_dates.append(checkpoint.start_date.date())
+    if all_dates:
+        start_date = min(all_dates)
+        end_date = max(all_dates)
+    else:
+        # If there are no checkpoints, use a default date range of 60 days
+        start_date = datetime.now().date() - timedelta(days=30)
+        end_date = datetime.now().date() + timedelta(days=30)
     # Generate a list of all dates within the range
     all_dates = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
-    # Get the number of habits
-    num_habits = len(habits)
-
-    # Select specific habits to be displayed
-    selected_habits = []
     for habit in habits:
         print(f"{habit.id}. {habit.task}")
     while True:
@@ -427,16 +431,11 @@ def plot_habits_with_checkpoints(habits):
     plt.xlabel('Date (Month-Day)')
     plt.ylabel('Habit')
     plt.title('Habits with Checkpoints')
+    # get the dates and format it with month and day without the year
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+    plt.gcf().autofmt_xdate()  # Rotate and align the x-axis labels for better visibility
     plt.tight_layout()
-
-    # Convert x-axis ticks from numpy float64 to datetime objects
-    x_ticks = plt.gca().get_xticks()
-    x_ticks_datetime = [start_date + timedelta(days=int(x)) for x in x_ticks]
-
-    # Format x-axis ticks to show only month and day
-    plt.gca().xaxis.set_major_locator(FixedLocator(x_ticks))
-    plt.gca().xaxis.set_major_formatter(plt.FixedFormatter([date.strftime("%m-%d") for date in x_ticks_datetime]))
-
     plt.show()
 
 
