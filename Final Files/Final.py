@@ -78,7 +78,7 @@ class Checkpoint(Base):
     __tablename__ = 'checkpoints'
     id = Column(Integer, primary_key=True)
     habit_id = Column(Integer, ForeignKey('habits.id'))
-    date = Column(DateTime)
+    checkpoint_date = Column(DateTime)
     habit = relationship("Habit", back_populates="checkpoints")
 
 
@@ -106,7 +106,7 @@ def add_checkpoint(habit, date):
             habit (Habit): The Habit object to which the checkpoint will be added.
             start_date (datetime): The start date of the checkpoint.
     """
-    checkpoint = Checkpoint(date=date)
+    checkpoint = Checkpoint(checkpoint_date=date)
     habit.checkpoints.append(checkpoint)
     session.commit()
 
@@ -162,7 +162,7 @@ def generate_fake_checkpoints():
                     checkpoint_dates.add(start_date)
 
                 # Check if any future start_dates with the same date already exist
-                existing_start_dates = {checkpoint.start_date.date() for checkpoint in habit.checkpoints}
+                existing_start_dates = {checkpoint.checkpoint_date.date() for checkpoint in habit.checkpoints}
                 valid_checkpoints = []
                 for start_date in checkpoint_dates:
                     if start_date not in existing_start_dates:
@@ -225,10 +225,10 @@ def habits_with_checkpoints(habits):
 
     for habit in habits:
         print(f"\nHabit: {habit.task} ({habit.frequency.value})")
-        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.start_date.month, x.start_date.day))
+        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
         print("Checkpoints:")
         for checkpoint in checkpoints:
-            print(f"Start Date: {checkpoint.start_date}")
+            print(f"Start Date: {checkpoint.checkpoint_date}")
 
 
 def get_longest_streak_for_habit(habit):
@@ -242,13 +242,13 @@ def get_longest_streak_for_habit(habit):
     Returns:
         int: The length of the longest streak of consecutive checkpoints.
     """
-    checkpoints = sorted(habit.checkpoints, key=lambda x: (x.start_date.month, x.start_date.day))
+    checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
     streak = 0
     max_streak = 0
     previous_start_date = None
 
     for checkpoint in checkpoints:
-        start_date = checkpoint.start_date.date()
+        start_date = checkpoint.checkpoint_date.date()
         if habit.frequency == Frequency.WEEKLY:
             if previous_start_date is None or (start_date - previous_start_date).days == 7:
                 streak += 1
@@ -321,12 +321,12 @@ def get_broken_streak_habits(habits):
     broken_streak_habits = []
 
     for habit in habits:
-        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.start_date.month, x.start_date.day))
+        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
         previous_end_date = None
         streak_broken = False
 
         for checkpoint in checkpoints:
-            start_date = checkpoint.start_date.date()
+            start_date = checkpoint.checkpoint_date.date()
             if habit.frequency == Frequency.WEEKLY:
                 if previous_end_date is not None and (
                         start_date - previous_end_date != timedelta(weeks=1)
@@ -396,7 +396,7 @@ def plot_habits_with_checkpoints(habits):
     all_dates = []
     for habit in habits:
         for checkpoint in habit.checkpoints:
-            all_dates.append(checkpoint.start_date.date())
+            all_dates.append(checkpoint.checkpoint_date.date())
     if all_dates:
         start_date = min(all_dates)
         end_date = max(all_dates)
@@ -419,9 +419,9 @@ def plot_habits_with_checkpoints(habits):
             print("Invalid habit number(s). Please try again.")
 
     for i, habit in enumerate(selected_habits):
-        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.start_date.month, x.start_date.day))
+        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
         if checkpoints:
-            dates = [checkpoint.start_date.date() for checkpoint in checkpoints]
+            dates = [checkpoint.checkpoint_date.date() for checkpoint in checkpoints]
             y_values = [i] * len(checkpoints)
 
             # Find the index of the first checkpoint in all_dates
@@ -503,7 +503,7 @@ def main():
                 try:
                     start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M")
                     existing_checkpoint = session.query(Checkpoint).filter_by(habit_id=habit_id,
-                                                                              start_date=start_date).first()
+                                                                              checkpoint_date=start_date).first()
                     if existing_checkpoint:
                         print("Checkpoint already exists for this habit and start date.")
                         break
