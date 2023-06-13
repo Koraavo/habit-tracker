@@ -41,7 +41,8 @@ class Frequency(Enum):
 
 
 class Habit(Base):
-    """A class representing a habit in the application.
+    """
+    A class representing a habit in the application.
 
     Attributes:
         id (int): The unique identifier for the habit.
@@ -50,19 +51,18 @@ class Habit(Base):
         checkpoints (List[Checkpoint]): The checkpoints associated with the habit, specifying the date.
 
     """
-    # One habit can have multiple checkpoints
-    # the relationship function defines this relationship
-    # The backref parameter specifies the name of the attribute
-    # that will be added to the Checkpoint class to access the associated Habit object.
-    # The cascade parameter specifies the cascading behavior,
-    # where "all, delete-orphan" indicates that associated Checkpoint objects should be deleted
-    # when the corresponding Habit object is deleted.
+
     __tablename__ = 'habits'
 
     id = Column(Integer, primary_key=True)
     task = Column(String)
     frequency = Column(EnumColumn(Frequency))
     # checkpoints = relationship("Checkpoint", backref="habit", cascade="all, delete-orphan")
+    # checkpoint class has the habit attribute that refers to the Habit object
+    # delete checkpoints when habit is deleted, and also all orphaned checkpoints if any
+    # the Habit class can access the associated Checkpoint objects through the checkpoints attribute,
+    # and vice versa.It allows for convenient querying and
+    # manipulation of related data between Habit and Checkpoint objects.
     checkpoints = relationship("Checkpoint", back_populates="habit", cascade="all, delete-orphan")
 
 
