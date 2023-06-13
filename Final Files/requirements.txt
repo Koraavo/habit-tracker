@@ -18,7 +18,6 @@ packaging==23.1
 Pillow==9.5.0
 platformdirs==3.5.3
 pluggy==1.0.0
-py2puml==0.7.2
 pylint==2.17.4
 pyparsing==3.0.9
 pytest==7.3.1
