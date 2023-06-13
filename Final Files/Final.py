@@ -10,8 +10,6 @@ from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 import os
 
-
-
 # Get the current directory
 current_directory = os.getcwd()
 
@@ -80,7 +78,7 @@ class Checkpoint(Base):
     __tablename__ = 'checkpoints'
     id = Column(Integer, primary_key=True)
     habit_id = Column(Integer, ForeignKey('habits.id'))
-    start_date = Column(DateTime)
+    date = Column(DateTime)
     habit = relationship("Habit", back_populates="checkpoints")
 
 
@@ -101,14 +99,14 @@ def create_habit(task, frequency):
     return Habit(task=task, frequency=frequency)
 
 
-def add_checkpoint(habit, start_date):
+def add_checkpoint(habit, date):
     """Add a new checkpoint to a habit.
 
         Args:
             habit (Habit): The Habit object to which the checkpoint will be added.
             start_date (datetime): The start date of the checkpoint.
     """
-    checkpoint = Checkpoint(start_date=start_date)
+    checkpoint = Checkpoint(date=date)
     habit.checkpoints.append(checkpoint)
     session.commit()
 

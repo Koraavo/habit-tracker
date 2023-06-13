@@ -6,7 +6,6 @@ from io import StringIO
 import sys
 
 
-
 @pytest.fixture(scope="session")
 def database():
     """
@@ -170,6 +169,7 @@ def test_habits_with_checkpoints(database):
     expected_output = "Habits and their checkpoints:\n\nHabit: Exercise (daily)\nCheckpoints:\nStart Date: 2023-06-01 00:00:00\nStart Date: 2023-06-03 00:00:00\n"
     assert output == expected_output
 
+
 # Unit test for get_longest_streak_for_habit
 def test_get_longest_streak_for_habit():
     # Create a habit with daily checkpoints
@@ -219,13 +219,15 @@ def test_get_longest_run_streak():
     habit2.checkpoints = [checkpoint5, checkpoint6, checkpoint7, checkpoint8]
 
     # Call the get_longest_run_streak function
-    longest_weekly_streak, weekly_streak_habits, longest_daily_streak, daily_streak_habits = get_longest_run_streak([habit1, habit2])
+    longest_weekly_streak, weekly_streak_habits, longest_daily_streak, daily_streak_habits = get_longest_run_streak(
+        [habit1, habit2])
 
     # Assert the results
     assert longest_weekly_streak == 2
     assert weekly_streak_habits == [habit2]
     assert longest_daily_streak == 3
     assert daily_streak_habits == [habit1]
+
 
 # Unit test for get_broken_streak_habits
 def test_get_broken_streak_habits():
@@ -250,4 +252,3 @@ def test_get_broken_streak_habits():
 
     # Assert the result
     assert broken_streak_habits == [habit1]
-
