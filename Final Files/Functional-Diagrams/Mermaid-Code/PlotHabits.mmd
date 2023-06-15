@@ -1,0 +1,35 @@
+graph LR
+
+subgraph "plot_habits_with_checkpoints"
+    A[Start] --> B[Create empty figure]
+    B --> C[Get all_dates from checkpoints]
+    C --> D[Check if all_dates is not empty]
+    D --> |Yes| E[Get start_date and end_date]
+    D --> |No| F[Set default date range]
+    E --> G[Generate all_dates within the range]
+    F --> G
+    G --> H[Iterate over habits]
+    H --> I[Print habit id and task]
+    I --> J[Ask for habit numbers]
+    J --> K[Parse selected habit ids]
+    K --> L[Filter selected_habits]
+    L --> M[Check if all selected habits are valid]
+    M --> |Yes| N[Break loop]
+    M --> |No| J[Ask for habit numbers again]
+    N --> O[Iterate over selected_habits]
+    O --> P[Sort checkpoints by date]
+    P --> Q[Check if checkpoints is not empty]
+    Q --> R[Get dates and y_values]
+    R --> S[Find first_date_index]
+    S --> T[Plot habit's checkpoints]
+    T --> U[Iterate over all_dates after the first checkpoint]
+    U --> V[Plot grey dots for the habit]
+    V --> O
+    O --> W[Update y-axis labels]
+    W --> X[Set x-axis labels]
+    X --> Y[Set x-axis date format]
+    Y --> Z[Rotate and align x-axis labels]
+    Z --> AA[Adjust layout]
+    AA --> AB[Show the figure]
+    AB --> AC[End]
+end
