@@ -249,7 +249,7 @@ def get_longest_streak_for_habit(habit):
 
     for checkpoint in checkpoints:
         start_date = checkpoint.checkpoint_date.date()
-        print(start_date)
+        # print(start_date)
         if habit.frequency == Frequency.WEEKLY:
             if previous_start_date is None or (start_date - previous_start_date).days == 7:
                 streak += 1
