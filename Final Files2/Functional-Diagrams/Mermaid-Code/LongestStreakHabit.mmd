@@ -1,0 +1,25 @@
+graph TD
+subgraph "get_longest_streak_habit"
+    A[Start] --> B[Initialize variables]
+    B --> C[Sort checkpoints by date]
+    C --> D[Iterate over checkpoints]
+    D --> E{Is habit frequency weekly?}
+    E -- Yes --> F{Is previous start date None or difference in days is 7?}
+    F -- Yes --> G[Increment streak by 1]
+    G --> H[Update previous start date]
+    F -- No --> I[Update max streak if streak is greater, reset streak to 1]
+    I --> H[Update previous start date]
+    E -- No --> J{Is habit frequency daily?}
+    J -- Yes --> K{Is previous start date None or difference in days is 1?}
+    K -- Yes --> L[Increment streak by 1]
+    L --> M[Update previous start date]
+    K -- No --> N[Update max streak if streak is greater, reset streak to 1]
+    N --> M[Update previous start date]
+    M --> D[Continue iteration]
+    D --> O{Are there more checkpoints?}
+    O -- Yes --> D
+    O -- No --> P[Update max streak with final streak count]
+    P --> Q[Return max streak]
+    Q --> R[End]
+end
+
