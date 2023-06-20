@@ -3,10 +3,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from habit import Base, Habit, Frequency, Checkpoint
-from main import create_habit, add_checkpoint, generate_random_habits, generate_fake_checkpoints, get_habits, get_user_input, delete_habit, habits_with_checkpoints
+from main import create_habit, add_checkpoint, generate_random_habits, generate_fake_checkpoints, habits_with_checkpoints
+from analytics import get_broken_streak_habits, get_longest_streak_for_habit, get_longest_run_streak
 from io import StringIO
 import sys
-from analytics import get_broken_streak_habits, get_longest_streak_for_habit, get_longest_run_streak
 
 
 @pytest.fixture(scope="session")
