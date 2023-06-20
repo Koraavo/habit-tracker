@@ -6,20 +6,6 @@ import matplotlib.dates as mdates
 from habit import Frequency, Checkpoint, Habit
 
 
-def habits_with_checkpoints(habits):
-    """Print habits and their associated checkpoints.
-    Retrieves habits from the database and prints each habit along with its associated checkpoints.
-    """
-    print("Habits and their checkpoints:")
-
-    for habit in habits:
-        print(f"\nHabit: {habit.task} ({habit.frequency.value})")
-        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
-        print("Checkpoints:")
-        for checkpoint in checkpoints:
-            print(f"Start Date: {checkpoint.checkpoint_date}")
-
-
 def get_longest_streak_for_habit(habit):
     """Calculate the longest streak of consecutive checkpoints for a habit.
 

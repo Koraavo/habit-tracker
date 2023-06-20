@@ -1,7 +1,8 @@
 import datetime
 import random
 from habit import Habit, Frequency, Checkpoint
-from analytics import habits_with_checkpoints, plot_habits_with_checkpoints, get_broken_streak_habits, get_longest_streak_for_habit, get_longest_run_streak
+from analytics import plot_habits_with_checkpoints, get_broken_streak_habits, \
+    get_longest_streak_for_habit, get_longest_run_streak
 from datetime import datetime, timedelta
 from db import session
 
@@ -33,6 +34,7 @@ def add_checkpoint(habit, date):
     habit.checkpoints.append(checkpoint)
     session.commit()
 
+
 def get_habits():
     """Get all habits from the database and print them.
 
@@ -45,6 +47,7 @@ def get_habits():
     for habit in habits:
         print(f"{habit.id}. {habit.task} ({habit.frequency.value})")
     return habits
+
 
 def generate_random_habits():
     """Generate five random habits if they don't already exist in the database.
@@ -68,6 +71,20 @@ def generate_random_habits():
             habit = create_habit(task, frequency)
             session.add(habit)
             session.commit()
+
+
+def habits_with_checkpoints(habits):
+    """Print habits and their associated checkpoints.
+    Retrieves habits from the database and prints each habit along with its associated checkpoints.
+    """
+    print("Habits and their checkpoints:")
+
+    for habit in habits:
+        print(f"\nHabit: {habit.task} ({habit.frequency.value})")
+        checkpoints = sorted(habit.checkpoints, key=lambda x: (x.checkpoint_date.month, x.checkpoint_date.day))
+        print("Checkpoints:")
+        for checkpoint in checkpoints:
+            print(f"Start Date: {checkpoint.checkpoint_date}")
 
 
 def generate_fake_checkpoints():
@@ -137,6 +154,7 @@ def generate_fake_checkpoints():
         else:
             # if habits already exist, just show the habits with their checkpoints
             habits_with_checkpoints(habits)
+
 
 def delete_habit(habit_id):
     """Delete a habit based on the provided habit ID.

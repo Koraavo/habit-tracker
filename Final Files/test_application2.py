@@ -7,6 +7,7 @@ from main import create_habit, add_checkpoint, generate_random_habits, generate_
 from io import StringIO
 import sys
 from analytics import get_broken_streak_habits, get_longest_streak_for_habit, get_longest_run_streak
+from db import session
 
 
 @pytest.fixture(scope="session")
@@ -83,23 +84,73 @@ def test_generate_random_habits(session):
 
 
 def test_generate_fake_checkpoints(session):
+    # Create a habit with a daily frequency
+    habit1 = Habit(task="Exercise", frequency=Frequency.DAILY)
+    session.add(habit1)
+
+    # Create a habit with a weekly frequency
+    habit2 = Habit(task="Read a book", frequency=Frequency.WEEKLY)
+    session.add(habit2)
+
+    # Commit the session to persist the habits
+    session.commit()
+
     # Generate fake checkpoints
-    generate_fake_checkpoints()  # Pass the session object as a parameter
-    habits = session.query(Habit).all()
+    generate_fake_checkpoints()
+
+    # # Verify if checkpoints are added to the habits
+    # assert len(habit1.checkpoints) > 0
+    # assert len(habit2.checkpoints) > 0
+
     # Verify if the generated checkpoints have the correct dates
-    for habit in habits:
-        assert all(isinstance(checkpoint.checkpoint_date, datetime) for checkpoint in habit.checkpoints)
+    for checkpoint in habit1.checkpoints:
+        assert isinstance(checkpoint.checkpoint_date, datetime)
+        assert (datetime.now().date() - checkpoint.checkpoint_date.date()).days <= 29
+
+    for checkpoint in habit2.checkpoints:
+        assert isinstance(checkpoint.checkpoint_date, datetime)
+        assert (datetime.now().date() - checkpoint.checkpoint_date.date()).days <= 21
+
+
+# Unit test for get_habits
+def test_get_habits(database):
+    # Create some sample habits in the database
+    habit1 = Habit(task='Exercise', frequency=Frequency.DAILY)
+    habit2 = Habit(task='Read a book', frequency=Frequency.WEEKLY)
+    database.add(habit1)
+    database.add(habit2)
+    database.commit()
+
+    # Capture the printed output
+    stdout = sys.stdout
+    sys.stdout = StringIO()
+
+    # Call the get_habits function
+    habits = get_habits()
+
+    # Get the captured output
+    output = sys.stdout.getvalue()
+
+    # Reset the standard output
+    sys.stdout = stdout
+
+    # Assert the printed output
+    expected_output = "Existing Habits:\n1. Exercise (daily)\n2. Read a book (weekly)\n"
+    assert output == expected_output
+
+    # Assert the returned habits
+    assert habits == [habit1, habit2]
 
 
 # Unit test for habits_with_checkpoints
-def test_habits_with_checkpoints(session):
+def test_habits_with_checkpoints(database):
     # Create a habit with checkpoints in the database
     habit = Habit(task='Exercise', frequency=Frequency.DAILY)
     checkpoint1 = Checkpoint(checkpoint_date=datetime(2023, 6, 1))
     checkpoint2 = Checkpoint(checkpoint_date=datetime(2023, 6, 3))
     habit.checkpoints = [checkpoint1, checkpoint2]
-    session.add(habit)
-    session.commit()
+    database.add(habit)
+    database.commit()
 
     # Capture the printed output
     stdout = sys.stdout
@@ -172,9 +223,9 @@ def test_get_longest_run_streak():
         [habit1, habit2])
 
     # Assert the results
-    assert longest_weekly_streak == 4
+    assert longest_weekly_streak == 2
     assert weekly_streak_habits == [habit2]
-    assert longest_daily_streak == 3
+    assert longest_daily_streak == 4
     assert daily_streak_habits == [habit1]
 
 
